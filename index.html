@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>preview slideshow</title>
+	<meta name="keywords" content="keyword,keyword">
+	<meta name="description" content="your description">
+	<meta charset="UTF-8">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<meta name="Generator" contect="sublime text 3">
+	<meta http-equiv="Content-Language" contect="zh-CN"> 
+	<meta http-equiv="windows-Target" contect="_top">	
+	<meta name="author" content="Cynthia,2015-10-26,yinqingqian@outlook.com">
+
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+	<meta name="x5-orientation" content="portrait">
+	<meta name="msapplication-tap-highlight" content="no">
+	<meta content="telephone=no" name="format-detection">
+	<meta content="email=no" name="format-detection">
+
+	<link rel="shortcut icon" href="images/ico.png" type="image/x-icon" />
+	<link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+	<div class="slider">
+		<!-- 0.模板 -->
+		<div class="main" id="template_main">
+			<div class="main-i" id="main_{{index}}">
+				<div class="caption" >
+					<h2>{{h2}}</h2>
+					<h3>{{h3}}</h3>
+				</div>
+				<img src="images/{{index}}.jpg" alt="" class="picture">
+			</div>
+		</div>
+		<div class="ctrl" id="template_ctrl">
+			<a class="ctrl-i" id="ctrl_{{index}}" href="javascript:SwitchSlider({{index}});">
+				<img src="images/{{index}}.jpg" alt="">
+			</a>
+		</div>
+	</div>
+
+	<script>
+		// 1.数据
+		var data = [
+			{img:1,h1:'Creative1',h2:'DUTE1'},
+			{img:2,h1:'Creative2',h2:'DUTE2'},
+			{img:3,h1:'Creative3',h2:'DUTE3'},
+			{img:4,h1:'Creative4',h2:'DUTE4'},
+			{img:5,h1:'Creative5',h2:'DUTE5'}
+		]	
+		// 2.通用函数
+		var g = function(id){
+			if(id.substr(0,1) == '.'){
+				return document.getElementsByClassName(id.substr(1))
+			}
+			return document.getElementById(id)
+		}	
+		// 3.添加幻灯片的操作
+		function addSliders(){
+			// 3.1 获取模板
+			var tpl_main = g('template_main').innerHTML.replace(/^\s*/,'')
+						 .replace(/^\s*$/,'');
+			var tpl_ctrl = g('template_ctrl').innerHTML.replace(/^\s*/,'')
+						 .replace(/^\s*$/,'');
+			// 3.2 定义最终输出HTML的变量
+			var out_main = [];
+			var out_ctrl = [];
+			// 3.3 遍历所有数据，构建最终输入的HML
+			for(i in data){
+				var _html_main = tpl_main.replace(/{{index}}/g,data[i].img)
+										 .replace(/{{h2}}/g,data[i].h1)
+										 .replace(/{{h3}}/g,data[i].h2);
+				var _html_ctrl = tpl_ctrl.replace(/{{index}}/g,data[i].img);
+				out_main.push(_html_main);
+				out_ctrl.push(_html_ctrl);
+			}
+			// 3.4 把html回写到DOM里面
+			g('template_main').innerHTML = out_main.join('');
+			g('template_ctrl').innerHTML = out_ctrl.join('');
+		}
+		// 4.幻灯片切换
+		function SwitchSlider(n){
+			// 4.1 获得要展现的幻灯片&控制按钮 
+			var main = g('main_' + n);
+			var ctrl = g('ctrl_' + n);
+
+			var clear_main = g('.main-i');
+			var clear_ctrl = g('.ctrl-i');
+			// 4.2 清除active
+			for(i=0;i<clear_ctrl.length;i++){
+				clear_main[i].className = clear_main[i].className.replace('main-i_active','');
+				clear_ctrl[i].className = clear_ctrl[i].className.replace('ctrl-i_active','');
+			}
+			
+			// 4.3 添加active
+			main.className += ' main-i_active';
+			ctrl.className += ' ctrl-i_active';
+		}
+		// 5.动态调整图片的位置
+		function movePictures(){
+			var pictures = g('.picture');
+			for(i=0;i<pictures.length;i++){
+				pictures[i].style.marginTop = (-1*pictures[i].clientHeight/2 )+ 'px';
+				pictures[i].style.marginLeft = (-1*pictures[i].clientWidth/2 )+ 'px'
+			}
+		}
+		window.onload = function(){
+			addSliders();
+			SwitchSlider(1);
+			setTimeout(function(){
+				movePictures();
+			},100)
+		}
+	</script>
+</body>
+
+
+</html>
